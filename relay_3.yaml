@@ -1,0 +1,94 @@
+substitutions:
+  devicename: downstair_living_room_3r
+  ip_address: "10.1.30.24"
+  ss_id: "WIFI SSID"
+  pass: "password"
+  switch4: "Name of switch 4 in HASSIO"
+  relay_1: "Name of relay 1 in hassio"
+  relay_2: "Name of relay 2 in hassio"
+  relay_3: "Name of relay 3 in hassio"
+esphome:
+  name: ${devicename}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: ${ss_id}
+  password: ${password}
+  manual_ip:
+    static_ip: ${ip_address}
+    gateway: 10.1.30.1
+    subnet: 255.255.255.0
+    dns1: 10.1.30.1
+  fast_connect: true
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+binary_sensor:
+########## Switch One################
+  - platform: gpio
+    id: switchone
+    filters:
+      - delayed_on: 80ms
+    pin:
+      number: 12
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      then:
+        - switch.toggle: relay1
+########## Switch 2 #############
+  - platform: gpio
+    id: switchotwo
+    filters:
+      - delayed_on: 80ms
+    pin:
+      number: 13
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      then:
+        - switch.toggle: relay3
+############ Switch 3 ################
+  - platform: gpio
+    id: switchthree
+    filters:
+      - delayed_on: 80ms
+    pin:
+      number: 14
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      then:
+        - switch.toggle: relay2
+############ Switch 4 ################
+  - platform: gpio
+    id: switchfour
+    filters:
+      - delayed_on: 80ms
+    pin:
+      number: 16
+      inverted: true
+    name: ${switch4}
+############### Relays #####################
+switch:
+  - platform: gpio
+    pin:
+      number: 5
+    name: ${relay_1}
+    id: relay1
+  - platform: gpio
+    pin:
+      number: 4
+    name: ${relay_2}
+    id: relay2
+  - platform: gpio
+    pin:
+      number: 15
+    name: ${relay_3}
+    id: relay3
